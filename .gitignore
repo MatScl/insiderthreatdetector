@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+.Python
+env/
+venv/
+.venv/
+ENV/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Data files - CERT dataset (molto pesante!)
+data/raw/cert/
+data/raw/r4.2/
+data/raw/*.tar.bz2
+data/raw/*.tar.gz
+data/raw/*.zip
+
+# Processed data (generati automaticamente)
+data/processed/*.csv
+data/processed/*.npy
+data/processed/*.pkl
+
+# Results
+data/results/*.csv
+data/results/*.json
+
+# Models
+models/*.pkl
+models/*.h5
+models/*.pt
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+temp/

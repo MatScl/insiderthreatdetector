@@ -1,2 +1,9 @@
 # Data files - CERT dataset (molto pesante!)
-data/raw/r4.2.tar.bz2
+data/raw/cert/
+data/raw/r4.2/
+data/raw/*.tar.bz2
+data/raw/*.tar.gz
+data/raw/*.zip
+
+# Feature extraction tool (progetto esterno)
+feature-extraction-for-CERT-insider-threat-test-datasets/

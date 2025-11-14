@@ -81,7 +81,7 @@ def reduce_cert_dataset(input_dir, output_dir, target_size_mb=500, n_users=500):
         filepath = input_path / filename
         
         if not filepath.exists():
-            print(f"⚠️  {filename} non trovato, skip")
+            print(f"[WARNING] {filename} non trovato, skip")
             continue
         
         # Leggi solo colonna user (veloce)
@@ -94,7 +94,7 @@ def reduce_cert_dataset(input_dir, output_dir, target_size_mb=500, n_users=500):
         
         print(f"  {filename}: {len(users)} utenti")
     
-    print(f"\n✅ Utenti comuni a tutti i file: {len(common_users)}")
+    print(f"\n[OK] Utenti comuni a tutti i file: {len(common_users)}")
     
     # Step 2: Campiona utenti
     print(f"\n[2/3] Campionamento di {n_users} utenti casuali...")
@@ -106,7 +106,7 @@ def reduce_cert_dataset(input_dir, output_dir, target_size_mb=500, n_users=500):
         replace=False
     )
     
-    print(f"✅ Campionati {len(sampled_users)} utenti")
+    print(f"[OK] Campionati {len(sampled_users)} utenti")
     
     # Step 3: Filtra e salva ogni file
     print(f"\n[3/3] Filtraggio e salvataggio file...")
@@ -117,10 +117,10 @@ def reduce_cert_dataset(input_dir, output_dir, target_size_mb=500, n_users=500):
         filepath = input_path / filename
         
         if not filepath.exists():
-            print(f"\n⚠️  {filename} non trovato, skip")
+            print(f"\n[WARNING] {filename} non trovato, skip")
             continue
         
-        print(f"\n📄 Processando {filename}...")
+        print(f"\n[FILE] Processando {filename}...")
         
         # Carica file
         print(f"  Caricamento...")
@@ -139,19 +139,19 @@ def reduce_cert_dataset(input_dir, output_dir, target_size_mb=500, n_users=500):
         total_size_mb += new_size
         
         reduction_pct = (1 - new_size/original_size) * 100
-        print(f"  ✅ Salvato: {new_size:.1f} MB ({reduction_pct:.1f}% riduzione)")
+        print(f"  [OK] Salvato: {new_size:.1f} MB ({reduction_pct:.1f}% riduzione)")
         print(f"  Righe: {len(df):,} → {len(df_filtered):,}")
     
     # Copia psychometric.csv (piccolo, teniamolo intero)
     psycho_file = input_path / 'psychometric.csv'
     if psycho_file.exists():
-        print(f"\n📄 Copiando psychometric.csv...")
+        print(f"\n[FILE] Copiando psychometric.csv...")
         df_psycho = pd.read_csv(psycho_file)
         df_psycho_filtered = df_psycho[df_psycho['user'].isin(sampled_users)]
         df_psycho_filtered.to_csv(output_path / 'psychometric.csv', index=False)
         size = get_file_size_mb(output_path / 'psychometric.csv')
         total_size_mb += size
-        print(f"  ✅ Salvato: {size:.1f} MB")
+        print(f"  [OK] Salvato: {size:.1f} MB")
     
     # Summary
     print("\n" + "="*60)
@@ -162,10 +162,10 @@ def reduce_cert_dataset(input_dir, output_dir, target_size_mb=500, n_users=500):
     print(f"File salvati in: {output_path}")
     
     if total_size_mb > target_size_mb * 1.2:
-        print(f"\n⚠️  Dimensione supera target ({target_size_mb}MB)")
+        print(f"\n[WARNING] Dimensione supera target ({target_size_mb}MB)")
         print(f"   Suggerimento: riduci n_users a ~{int(n_users * target_size_mb / total_size_mb)}")
     else:
-        print(f"\n✅ Dimensione entro target!")
+        print(f"\n[OK] Dimensione entro target!")
     
     return total_size_mb
 

@@ -94,6 +94,10 @@ def reduce_cert_dataset(input_dir, output_dir, target_size_mb=500, n_users=500):
         
         print(f"  {filename}: {len(users)} utenti")
     
+    if common_users is None or len(common_users) == 0:
+        print("\n[ERROR] Nessun utente comune trovato tra i file!")
+        return 0
+    
     print(f"\n[OK] Utenti comuni a tutti i file: {len(common_users)}")
     
     # Step 2: Campiona utenti

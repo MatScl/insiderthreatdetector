@@ -7,3 +7,20 @@ data/raw/*.zip
 
 # Feature extraction tool (progetto esterno)
 feature-extraction-for-CERT-insider-threat-test-datasets/
+
+# Python cache e file temporanei
+__pycache__/
+*.pyc
+*.pyo
+*.log
+*.pid
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

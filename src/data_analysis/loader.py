@@ -52,7 +52,9 @@ class DataLoader:
         if missing_cols:
             raise ValueError(f"Missing required columns: {missing_cols}")
         
-        print(f"✅ Loaded {len(self.data)} users from {self.filepath}")
+        self.feature_names = [col for col in self.data.columns if col != 'user_id']
+        
+        print(f"[OK] Loaded {len(self.data)} users from {self.filepath}")
         return self.data
     
     def get_summary(self) -> dict:

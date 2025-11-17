@@ -57,7 +57,7 @@ class FeatureNormalizer:
         )
         df_norm.insert(0, 'user_id', user_ids)
         
-        print(f"✅ Normalized {len(df_norm)} users, {len(self.FEATURE_COLUMNS)} features")
+        print(f"[OK] Normalized {len(df_norm)} users, {len(self.FEATURE_COLUMNS)} features")
         return df_norm
     
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -123,7 +123,7 @@ def normalize_features(
         output_path = Path(save_path)
         output_path.parent.mkdir(parents=True, exist_ok=True)
         df_norm.to_csv(output_path, index=False)
-        print(f"💾 Saved normalized data to {output_path}")
+        print(f"[SAVED] Normalized data to {output_path}")
     
     return df_norm
 
@@ -134,7 +134,7 @@ if __name__ == '__main__':
     
     # Carica dati raw
     df_raw = load_user_features('data/raw/user_features.csv')
-    print("\n📊 Raw data sample:")
+    print("\nRaw data sample:")
     print(df_raw.head())
     
     # Normalizza
@@ -142,13 +142,13 @@ if __name__ == '__main__':
         df_raw,
         save_path='data/processed/normalized_features.csv'
     )
-    print("\n📊 Normalized data sample:")
+    print("\nNormalized data sample:")
     print(df_norm.head())
     
     # Mostra parametri scaling
     normalizer = FeatureNormalizer()
     normalizer.fit_transform(df_raw)
-    print("\n📈 Scaling parameters:")
+    print("\nScaling parameters:")
     params = normalizer.get_scaling_params()
     print(f"Mean: {params['mean']}")
     print(f"Std: {params['std']}")

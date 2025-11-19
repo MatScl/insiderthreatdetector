@@ -209,25 +209,7 @@ def cluster_users(features: pd.DataFrame,
             - distances: Array con distanza dal centroide per ogni utente
             - clusterer: Oggetto UserClusterer addestrato
     
-    Example:
-        >>> from src.data_analysis.loader import DataLoader
-        >>> from src.data_analysis.normalizer import normalize_features
-        >>> 
-        >>> # Carica e normalizza dati
-        >>> loader = DataLoader('data/raw/user_features.csv')
-        >>> data = loader.load()
-        >>> normalized_data = normalize_features(data)
-        >>> 
-        >>> # Clustering automatico
-        >>> labels, distances, clusterer = cluster_users(
-        >>>     normalized_data,
-        >>>     find_optimal=True
-        >>> )
-        >>> 
-        >>> # Aggiungi risultati al DataFrame
-        >>> normalized_data['cluster'] = labels
-        >>> normalized_data['cluster_distance'] = distances
-    """
+      """
     logger.info("=== Avvio clustering utenti ===")
     
     # Determina numero cluster

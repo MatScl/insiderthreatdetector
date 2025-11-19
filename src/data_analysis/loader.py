@@ -4,31 +4,30 @@ Data Loader per Insider Threat Detection
 Carica user_features.csv e valida la struttura.
 """
 
-import pandas as pd
 from pathlib import Path
+from typing import List, Optional
+
+import pandas as pd
 
 
 class DataLoader:
     """Carica e valida il CSV delle feature utente"""
-    
-    REQUIRED_COLUMNS = [
-        'user_id',
-        'logon_count',
-        'after_hours_logon',
-        'file_access',
-        'sensitive_files',
-        'email_count',
-        'external_emails',
-        'usb_connections'
+
+    DEFAULT_METADATA_COLUMNS = [
+        'starttime', 'endtime', 'user_id', 'role', 'b_unit', 'f_unit',
+        'dept', 'team', 'ITAdmin', 'O', 'C', 'E', 'A', 'N', 'insider'
     ]
-    
-    def __init__(self, filepath: str):
+
+    def __init__(self, filepath: str, exclude_columns: Optional[List[str]] = None):
         """
         Args:
             filepath: Path al file user_features.csv
+            exclude_columns: Colonne aggiuntive da escludere dalle feature
         """
         self.filepath = Path(filepath)
         self.data = None
+        self.exclude_columns = set(exclude_columns or [])
+        self.feature_names: List[str] = []
         
     def load(self) -> pd.DataFrame:
         """
@@ -47,14 +46,21 @@ class DataLoader:
         # Carica CSV
         self.data = pd.read_csv(self.filepath)
         
-        # Valida colonne
-        missing_cols = set(self.REQUIRED_COLUMNS) - set(self.data.columns)
-        if missing_cols:
-            raise ValueError(f"Missing required columns: {missing_cols}")
+        if 'user_id' not in self.data.columns:
+            raise ValueError("Column 'user_id' is required in user_features.csv")
+
+        numeric_columns = self.data.select_dtypes(include=['number', 'bool']).columns
+        metadata_cols = set(col for col in self.DEFAULT_METADATA_COLUMNS if col in self.data.columns)
+        excluded = metadata_cols | self.exclude_columns | {'user_id'}
+        self.feature_names = [col for col in numeric_columns if col not in excluded]
+
+        if not self.feature_names:
+            raise ValueError("No numeric feature columns found after exclusions.")
         
-        self.feature_names = [col for col in self.data.columns if col != 'user_id']
-        
-        print(f"[OK] Loaded {len(self.data)} users from {self.filepath}")
+        print(
+            f"[OK] Loaded {len(self.data)} users, {len(self.feature_names)} numeric features "
+            f"from {self.filepath}"
+        )
         return self.data
     
     def get_summary(self) -> dict:
@@ -64,14 +70,15 @@ class DataLoader:
         
         return {
             'n_users': len(self.data),
-            'n_features': len(self.REQUIRED_COLUMNS) - 1,  # escludi user_id
+            'n_features': len(self.feature_names),
             'missing_values': self.data.isnull().sum().to_dict(),
-            'feature_stats': self.data.describe().to_dict()
+            'feature_stats': self.data[self.feature_names].describe().to_dict()
         }
 
 
 # Funzione helper per uso rapido
-def load_user_features(filepath: str = 'data/raw/user_features.csv') -> pd.DataFrame:
+def load_user_features(filepath: str = 'data/raw/user_features.csv',
+                       exclude_columns: Optional[List[str]] = None) -> pd.DataFrame:
     """
     Carica user_features.csv con validazione automatica.
     
@@ -81,7 +88,7 @@ def load_user_features(filepath: str = 'data/raw/user_features.csv') -> pd.DataF
     Returns:
         DataFrame validato
     """
-    loader = DataLoader(filepath)
+    loader = DataLoader(filepath, exclude_columns=exclude_columns)
     return loader.load()
 
 

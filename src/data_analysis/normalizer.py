@@ -4,28 +4,35 @@ Feature Normalizer per Insider Threat Detection
 Normalizza le feature numeriche usando StandardScaler (z-score).
 """
 
-import pandas as pd
-import numpy as np
-from sklearn.preprocessing import StandardScaler
 from pathlib import Path
+from typing import List, Optional
+
+import numpy as np
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
 
 
 class FeatureNormalizer:
     """Normalizza feature comportamentali (mean=0, std=1)"""
-    
-    FEATURE_COLUMNS = [
-        'logon_count',
-        'after_hours_logon',
-        'file_access',
-        'sensitive_files',
-        'email_count',
-        'external_emails',
-        'usb_connections'
-    ]
-    
-    def __init__(self):
+
+    def __init__(self, feature_columns: Optional[List[str]] = None):
         self.scaler = StandardScaler()
         self.is_fitted = False
+        self.feature_columns = feature_columns
+        
+    def _resolve_feature_columns(self, df: pd.DataFrame) -> List[str]:
+        if self.feature_columns is not None:
+            missing = set(self.feature_columns) - set(df.columns)
+            if missing:
+                raise ValueError(f"Missing feature columns: {missing}")
+            return list(self.feature_columns)
+
+        numeric_cols = df.select_dtypes(include=['number', 'bool']).columns.tolist()
+        inferred = [col for col in numeric_cols if col != 'user_id']
+        if not inferred:
+            raise ValueError("No numeric columns available for normalization.")
+        self.feature_columns = inferred
+        return inferred
         
     def fit_transform(self, df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -37,27 +44,24 @@ class FeatureNormalizer:
         Returns:
             DataFrame normalizzato (user_id + feature normalizzate)
         """
-        # Valida colonne
-        missing = set(self.FEATURE_COLUMNS) - set(df.columns)
-        if missing:
-            raise ValueError(f"Missing feature columns: {missing}")
+        feature_columns = self._resolve_feature_columns(df)
         
         # Estrai user_id
         user_ids = df['user_id'].copy()
         
         # Normalizza solo le feature numeriche
-        features = df[self.FEATURE_COLUMNS].values
+        features = df[feature_columns].values
         normalized = self.scaler.fit_transform(features)
         self.is_fitted = True
         
         # Ricrea DataFrame
         df_norm = pd.DataFrame(
             normalized,
-            columns=self.FEATURE_COLUMNS
+            columns=feature_columns
         )
         df_norm.insert(0, 'user_id', user_ids)
         
-        print(f"[OK] Normalized {len(df_norm)} users, {len(self.FEATURE_COLUMNS)} features")
+        print(f"[OK] Normalized {len(df_norm)} users, {len(feature_columns)} features")
         return df_norm
     
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -74,10 +78,13 @@ class FeatureNormalizer:
             raise ValueError("Scaler not fitted. Call fit_transform() first.")
         
         user_ids = df['user_id'].copy()
-        features = df[self.FEATURE_COLUMNS].values
+        if self.feature_columns is None:
+            raise ValueError("Scaler not fitted. Feature columns unknown.")
+
+        features = df[self.feature_columns].values
         normalized = self.scaler.transform(features)
         
-        df_norm = pd.DataFrame(normalized, columns=self.FEATURE_COLUMNS)
+        df_norm = pd.DataFrame(normalized, columns=self.feature_columns)
         df_norm.insert(0, 'user_id', user_ids)
         return df_norm
     
@@ -88,10 +95,13 @@ class FeatureNormalizer:
         
         if self.scaler.mean_ is None or self.scaler.scale_ is None:
             raise ValueError("Scaler parameters not available.")
+
+        if self.feature_columns is None:
+            raise ValueError("Feature columns not set. Fit the scaler first.")
         
         return {
-            'mean': dict(zip(self.FEATURE_COLUMNS, self.scaler.mean_)),
-            'std': dict(zip(self.FEATURE_COLUMNS, self.scaler.scale_))
+            'mean': dict(zip(self.feature_columns, self.scaler.mean_)),
+            'std': dict(zip(self.feature_columns, self.scaler.scale_))
         }
     
     def save(self, filepath: str = 'data/processed/normalized_features.csv'):
@@ -103,7 +113,8 @@ class FeatureNormalizer:
 # Funzione helper per uso rapido
 def normalize_features(
     df: pd.DataFrame,
-    save_path: str = ""
+    save_path: str = "",
+    feature_columns: Optional[List[str]] = None
 ) -> pd.DataFrame:
     """
     Normalizza feature con StandardScaler.
@@ -115,7 +126,7 @@ def normalize_features(
     Returns:
         DataFrame normalizzato
     """
-    normalizer = FeatureNormalizer()
+    normalizer = FeatureNormalizer(feature_columns=feature_columns)
     df_norm = normalizer.fit_transform(df)
     
     # Salva se richiesto

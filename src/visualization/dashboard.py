@@ -17,9 +17,6 @@ sys.path.append(str(Path(__file__).parent.parent.parent))
 from src.visualization.plots import (
     plot_top_anomalies_bar,
     plot_score_distribution,
-    plot_cluster_distribution,
-    plot_scatter_clusters,
-    plot_correlation_heatmap,
     plot_anomaly_threshold
 )
 
@@ -94,33 +91,6 @@ def main():
         st.plotly_chart(fig, use_container_width=True)
     
     st.markdown("---")
-    
-    # ===== CLUSTER (se disponibile) =====
-    if 'cluster' in df.columns:
-        st.markdown("## Analisi Cluster")
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            fig = plot_cluster_distribution(np.array(df['cluster']))
-            st.plotly_chart(fig, use_container_width=True)
-        
-        with col2:
-            if 'cluster_distance' in df.columns and 'cf_anomaly_score' in df.columns:
-                fig = plot_scatter_clusters(df, 'cluster_distance', 'cf_anomaly_score', 
-                                           'cluster', 'Cluster Distance vs CF Score')
-                st.plotly_chart(fig, use_container_width=True)
-        
-        st.markdown("---")
-    
-    # ===== CORRELAZIONI =====
-    score_cols = [c for c in ['cluster_distance', 'cf_anomaly_score', 'pagerank_score', 
-                               'degree_centrality', 'final_anomaly_score'] if c in df.columns]
-    
-    if len(score_cols) >= 2:
-        st.markdown("## Correlazione Score")
-        fig = plot_correlation_heatmap(df, score_cols)
-        st.plotly_chart(fig, use_container_width=True)
-        st.markdown("---")
     
     # ===== TABELLA =====
     st.markdown("## Top Anomalie - Dettaglio")

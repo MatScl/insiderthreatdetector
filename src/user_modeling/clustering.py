@@ -131,7 +131,6 @@ class UserClusterer:
 def cluster_users(features, n_clusters=None, find_optimal=False, random_state=42):
     """Helper per clustering veloce"""
     
-    # TODO: auto k selection could be improved
     if find_optimal:
         temp_clusterer = UserClusterer(n_clusters=2)
         n_clusters = temp_clusterer.find_optimal_k(features)

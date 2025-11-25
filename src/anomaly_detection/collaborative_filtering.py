@@ -122,7 +122,6 @@ def detect_anomalies_cf(features, threshold_percentile=25, show_top=10):
     cf_detector = CollaborativeFilter()
     results = cf_detector.detect_anomalies(features, threshold_percentile)
     
-    # TODO: maybe add more detailed stats here
     cf_detector.get_similarity_statistics()
     
     if show_top > 0:

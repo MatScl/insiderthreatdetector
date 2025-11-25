@@ -101,7 +101,6 @@ class GraphRanker:
         pr_norm = (pagerank_scores - pr_min) / (pr_max - pr_min + 1e-10)
         deg_norm = (degree_scores - deg_min) / (deg_max - deg_min + 1e-10)
         
-        # FIXME: maybe use different weights for PR vs Degree?
         graph_anomaly_score = ((1 - pr_norm) + (1 - deg_norm)) / 2
         
         results = pd.DataFrame({

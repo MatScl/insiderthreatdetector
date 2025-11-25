@@ -129,7 +129,6 @@ def combine_anomaly_scores(cluster_distances, cf_scores, graph_scores, user_ids,
                            weight_cluster=0.3, weight_cf=0.4, weight_graph=0.3,
                            output_path=None, show_summary=True):
     """Helper per combinare score in una chiamata"""
-    # TODO: add parameter validation
     scorer = AnomalyScorer(weight_cluster, weight_cf, weight_graph)
     results = scorer.combine_scores(cluster_distances, cf_scores, graph_scores, user_ids)
     

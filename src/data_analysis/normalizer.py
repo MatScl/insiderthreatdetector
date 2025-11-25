@@ -17,13 +17,13 @@ class FeatureNormalizer:
         
     def _resolve_feature_columns(self, df):
         if self.feature_columns is not None:
-            missing = set(self.feature_columns) - set(df.columns)
+            missing = set(self.feature_columns) - set(df.columns)  #diff tra set colonne attese e colonne presenti
             if missing:
                 raise ValueError(f"Missing columns: {missing}")
             return list(self.feature_columns)
 
-        # auto-detect numeric cols
-        numeric_cols = df.select_dtypes(include=['number', 'bool']).columns.tolist()
+        # select numeric and boolean columns in dataframe
+        numeric_cols = df.select_dtypes(include=['number', 'bool']).columns.tolist() 
         inferred = [col for col in numeric_cols if col != 'user_id']
         if not inferred:
             raise ValueError("No numeric columns found")

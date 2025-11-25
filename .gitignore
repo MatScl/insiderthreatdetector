@@ -28,3 +28,10 @@ Thumbs.db
 # Documentation locale (spiegoni personali)
 spiegone.md
 spiegone_dettagliato.md
+
+
+REFERENCES.md
+check_system.py
+data/raw/user_features.csv
+data/results/
+results/

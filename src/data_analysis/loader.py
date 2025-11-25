@@ -8,11 +8,17 @@ import pandas as pd
 class DataLoader:
     """Loader per CSV feature utente"""
 
-    # colonne da escludere dalle feature numeriche
+    # Esclude solo: timestamp (data leakage), identificatori, costanti, ground truth
+    # NOTE: role/dept/team esclusi per evitare bias organizzativo
+    # Big Five (O,C,E,A,N) ora INCLUSI - sono feature psicometriche continue
     DEFAULT_METADATA_COLUMNS = [
-        'starttime', 'endtime', 'user_id', 'role', 'b_unit', 'f_unit',
-        'dept', 'team', 'ITAdmin', 'O', 'C', 'E', 'A', 'N', 'insider'
+        'starttime', 'endtime',  # timestamp aggregazione (data leakage)
+        'user_id',               # identificatore
+        'b_unit',                # costante (1 solo valore = 0.0)
+        'role', 'f_unit', 'dept', 'team',  # metadata organizzativo (rischio bias)
+        'insider'                # ground truth (CRITICO escludere!)
     ]
+    # ITAdmin, O, C, E, A, N ora incluse come feature comportamentali/psicometriche
 
     def __init__(self, filepath: str, exclude_columns: Optional[List[str]] = None):
         self.filepath = Path(filepath)
@@ -30,7 +36,7 @@ class DataLoader:
         if 'user_id' not in self.data.columns:
             raise ValueError("Column 'user_id' is required")
 
-        # TODO: maybe add support for categorical features
+       #seleziono colonne numeriche
         numeric_columns = self.data.select_dtypes(include=['number', 'bool']).columns
         metadata_cols = set(col for col in self.DEFAULT_METADATA_COLUMNS if col in self.data.columns)
         excluded = metadata_cols | self.exclude_columns | {'user_id'}

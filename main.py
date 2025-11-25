@@ -14,7 +14,7 @@ Usage:
 import argparse
 import logging
 from pathlib import Path
-import pandas as pd
+import pandas as pd #legge il csv
 
 from src.data_analysis.loader import DataLoader
 from src.data_analysis.normalizer import normalize_features

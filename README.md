@@ -14,7 +14,7 @@ python feature_extraction.py  # 3-4 ore
 cp ExtractedData/sessionr4.2.csv ../../data/raw/user_features.csv
 
 # run
-python main.py --find-optimal-k --top-k 20
+python main.py --find-optimal-k --top-k 20  # trova K ottimale e mostra top 20 anomalie
 
 # dashboard
 streamlit run src/visualization/dashboard.py

@@ -56,8 +56,9 @@ class UserClusterer:
         labels = self.predict(features)
         distances = np.zeros(len(features))
         centers = self.cluster_centers_ if self.cluster_centers_ is not None else np.array([])
-        
-        for i, (idx, row) in enumerate(features.iterrows()):
+
+        # Calcola distanza euclidea per ogni utente associato al cluster
+        for i, row in enumerate(features.itertuples(index=False)):
             cluster_id = labels[i]
             centroid = centers[cluster_id]
             distances[i] = np.linalg.norm(row.values - centroid)

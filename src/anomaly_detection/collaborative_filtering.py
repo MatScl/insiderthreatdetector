@@ -3,7 +3,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
-from typing import Tuple, Optional
+
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -60,6 +60,7 @@ class CollaborativeFilter:
         
         similarities = self.similarity_matrix_[user_idx].copy()
         similarities[user_idx] = -1
+        # argsort ritorna indici ordinati
         top_indices = np.argsort(similarities)[::-1][:top_k]
         
         user_indices = self.user_indices_ if self.user_indices_ is not None else []

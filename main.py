@@ -63,7 +63,7 @@ def run_pipeline(input_path, output_path, n_clusters=None, find_optimal_k=False,
                 similarity_threshold=0.7, weight_cluster=0.3, weight_cf=0.4,
                 weight_graph=0.3, top_k=20, show_summary=True):
     """Esegue pipeline completa"""
-    # TODO: add progress bar maybe?
+    
     logger.info("Avvio pipeline")
     
     # Step 1: Carica dati
@@ -95,6 +95,7 @@ def run_pipeline(input_path, output_path, n_clusters=None, find_optimal_k=False,
     
     # Step 4: CF
     cf_results, cf_detector = detect_anomalies_cf(feature_matrix, show_top=0)
+    # Se max_similarity < 0.75 (ossia anomaly_score > 0.25)
     
     # Step 5: Graph ranking
     if cf_detector.similarity_matrix_ is None:

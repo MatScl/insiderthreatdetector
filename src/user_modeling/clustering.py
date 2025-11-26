@@ -4,12 +4,11 @@ import pandas as pd
 import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
-from typing import Tuple, Optional
+
 import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
 
 class UserClusterer:
     """Clustering K-Means per raggruppare utenti simili"""
@@ -122,6 +121,7 @@ class UserClusterer:
             inertias.append(kmeans_temp.inertia_)
             silhouettes.append(silhouette_score(features, labels))
         
+        # argmax mi da l'indice dove in quell'array c'è il valore massimo di silhouette
         optimal_k = k_range[np.argmax(silhouettes)]
         logger.info(f"Optimal k: {optimal_k} (silhouette={max(silhouettes):.3f})")
         

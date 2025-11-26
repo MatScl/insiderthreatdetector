@@ -22,7 +22,7 @@ class FeatureNormalizer:
                 raise ValueError(f"Missing columns: {missing}")
             return list(self.feature_columns)
 
-        # select numeric and boolean columns in dataframe
+        # in manca di esclusioni, inferiamo le colonne numeriche
         numeric_cols = df.select_dtypes(include=['number', 'bool']).columns.tolist() 
         inferred = [col for col in numeric_cols if col != 'user_id']
         if not inferred:

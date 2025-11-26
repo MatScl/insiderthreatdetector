@@ -25,7 +25,7 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# Documentation locale (spiegoni personali)
+# Documentation locale 
 spiegone.md
 spiegone_dettagliato.md
 SPIEGONI.md
